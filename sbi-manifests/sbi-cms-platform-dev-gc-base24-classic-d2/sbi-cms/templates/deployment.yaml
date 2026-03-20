@@ -1,0 +1,53 @@
+---
+# Source: sbi-cms/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sbi-cms-platform-dev-gc-base24-classic-d2
+  namespace: sbi
+  labels:
+    app: sbi-cms-platform-dev-gc-base24-classic-d2
+    intent: apps
+spec:
+  selector:
+    matchLabels:
+      app: sbi-cms-platform-dev-gc-base24-classic-d2
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sbi-cms-platform-dev-gc-base24-classic-d2
+        intent: apps
+      annotations:
+        kubernetes.io/psp: eks.privileged
+        "fss.com/app-configmap-hash": de7423f40aae32eccf664fd362c3e2c5175b14fa7073600263b9f536b183c3cf
+    spec:
+      serviceAccountName: sbi-cms-platform-dev-gc-base24-classic-d2-sa
+      volumes:
+      containers:
+        - name: sbi-cms-platform-dev-gc-base24-classic-d2
+          image: 736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-go-connect:sbi-uat.v81
+          volumeMounts:
+          ports:
+            - containerPort: 8290
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: sbi-cms-platform-dev-gc-base24-classic-d2
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      nodeSelector:
+        app: sbi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

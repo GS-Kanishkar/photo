@@ -1,0 +1,22 @@
+---
+# Source: sbi-cms/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sbi-cms-platform-notification-service
+  namespace: sbi
+  labels:
+    app: sbi-cms-platform-notification-service
+  annotations: 
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8096-8096'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - protocol: TCP
+      port: 8096
+      targetPort: 8096
+      name: 8096-8096
+  selector:
+    app: sbi-cms-platform-notification-service
+  type: ClusterIP

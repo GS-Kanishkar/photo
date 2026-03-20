@@ -1,0 +1,22 @@
+---
+# Source: sbi-cms/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sbi-cms-issuance-program-configuration-extn
+  namespace: sbi
+  labels:
+    app: sbi-cms-issuance-program-configuration-extn
+  annotations: 
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8091-8091'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - protocol: TCP
+      port: 8091
+      targetPort: 8091
+      name: 8091-8091
+  selector:
+    app: sbi-cms-issuance-program-configuration-extn
+  type: ClusterIP

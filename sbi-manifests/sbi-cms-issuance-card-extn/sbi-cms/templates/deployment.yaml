@@ -1,0 +1,73 @@
+---
+# Source: sbi-cms/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sbi-cms-issuance-card-extn
+  namespace: sbi
+  labels:
+    app: sbi-cms-issuance-card-extn
+    intent: apps
+spec:
+  selector:
+    matchLabels:
+      app: sbi-cms-issuance-card-extn
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sbi-cms-issuance-card-extn
+        intent: apps
+      annotations:
+        kubernetes.io/psp: eks.privileged
+        "fss.com/app-configmap-hash": c89852c2d6307fb7e2e8f1cb89a4445e0c1ffa68cee746e900c4184258be2297
+    spec:
+      serviceAccountName: sbi-cms-issuance-card-extn-sa
+      volumes:
+        - name: key-cert-vol
+          configMap:
+            name: public-private-key
+        - name: visa-npci-key-configmap-volume
+          configMap:
+            name: visa-npci-key-configmap
+        - name: dcms-keys-volume
+          configMap:
+            name: dcms-keys-configmap
+        - name: sbi-keys-volume
+          configMap:
+            name: sbi-keys-configmap
+      containers:
+        - name: sbi-cms-issuance-card-extn
+          image: 736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-card-extn:sbi-uat.v1398
+          volumeMounts:
+            - name: key-cert-vol
+              mountPath: /config
+            - name: visa-npci-key-configmap-volume
+              mountPath: /data
+            - name: dcms-keys-volume
+              mountPath: /vol
+            - name: sbi-keys-volume
+              mountPath: /sbi
+          ports:
+            - containerPort: 8061
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: sbi-cms-issuance-card-extn
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      nodeSelector:
+        app: sbi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

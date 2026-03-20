@@ -1,0 +1,22 @@
+---
+# Source: sbi-cms/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sbi-cms-user-access-management-extn
+  namespace: sbi
+  labels:
+    app: sbi-cms-user-access-management-extn
+  annotations: 
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '7070-7070'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - protocol: TCP
+      port: 7070
+      targetPort: 7070
+      name: 7070-7070
+  selector:
+    app: sbi-cms-user-access-management-extn
+  type: ClusterIP

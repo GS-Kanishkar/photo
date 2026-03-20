@@ -1,0 +1,22 @@
+---
+# Source: sbi-cms/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sbi-cms-issuance-hsm-connect
+  namespace: sbi
+  labels:
+    app: sbi-cms-issuance-hsm-connect
+  annotations: 
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8062-8062'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - protocol: TCP
+      port: 8062
+      targetPort: 8062
+      name: 8062-8062
+  selector:
+    app: sbi-cms-issuance-hsm-connect
+  type: ClusterIP

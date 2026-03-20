@@ -1,0 +1,43 @@
+---
+# Source: sbi-cms/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sbi-cms-issuance-program-configuration-extn
+data:
+  MYSQL_HOST: "192.168.1.236"
+  KAFKA_HOST: "dcms.apps.dcmsnonprod.bank.sbi"
+  KAFKA_PORT: "9092"
+  ACTIVE_DB_PROFILE: "oracle"
+  ALERT_APPLICABLE: "1"
+  ALLOWED_ORIGINS: "https://dcms.apps.dcmsnonprod.bank.sbi,http://localhost:4200"
+  CMS_CARD_API: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance"
+  CMS_PROGRAM_CONFIG_SCHEMA: "CMS_PROGRAM_CFG"
+  CMS_SCHEDULER_API: "http://sbi-cms-issuance-scheduler-api-extn:8056/sbi/scheduler-api"
+  CMS_SUPPORT_API: "http://sbi-cms-issuance-support-extn:8057/sbi/issuance-support"
+  CMS_USER_ACCESS_MANAGEMENT_API: "http://sbi-cms-user-access-management-extn:7070/sbi/uam/v2"
+  DB_PROFILE: "oracle"
+  DEFAULT_TENANT_CODE: "SBI"
+  GLOBAL_SERVICE_API: "http://sbi-cms-global-service:8050/sbi/global-service"
+  GO_EXC_MAPPER_API: "http://sbi-cms-platform-go-exchange-rate-mapper:8097/sbi/platform/exchange-rate-mapper"
+  JASYPT_PASSWORD: "cmsblaze"
+  KAFKA_STATUS: "no-kafka"
+  MYSQL_HOST: "192.168.1.236"
+  MYSQL_PASSWORD: "Canaraprod#123"
+  MYSQL_SCHEMA_PREFIX: ""
+  MYSQL_USER: "admin"
+  ORACLE_HOST: "uatrac-scan.dcmsnonprod.bank.sbi"
+  ORACLE_PASSWORD: "Kv3Cf951"
+  ORACLE_PORT: "6521"
+  ORACLE_SCHEMA_PREFIX: ""
+  ORACLE_SERVICE_NAME: "DCMSDB"
+  ORACLE_USER: "blaze"
+  POSTGRES_HOST: "globaldb-preprod-platform-cms-rds.global-g9jpjqjqn9ip.global.rds.amazonaws.com"
+  POSTGRES_PASSWORD: "preprodcms123#"
+  POSTGRES_SCHEMA_PREFIX: ""
+  POSTGRES_USER: "postgres"
+  SCHEMA: "CMS_PROGRAM_CFG"
+  SYSTEM_USER: "SYSTEM_USER"
+  TENANT_ACCESS_CHECK_APPLICABLE: "0"
+  TOKEN_EXPIRY: "24m"
+  TOKEN_SIGNING_KEY: "8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb"

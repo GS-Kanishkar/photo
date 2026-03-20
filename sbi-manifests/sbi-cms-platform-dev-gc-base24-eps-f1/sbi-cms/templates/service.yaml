@@ -1,0 +1,22 @@
+---
+# Source: sbi-cms/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sbi-cms-platform-dev-gc-base24-eps-f1
+  namespace: sbi
+  labels:
+    app: sbi-cms-platform-dev-gc-base24-eps-f1
+  annotations: 
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8290-8290'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - protocol: TCP
+      port: 8290
+      targetPort: 8290
+      name: 8290-8290
+  selector:
+    app: sbi-cms-platform-dev-gc-base24-eps-f1
+  type: ClusterIP

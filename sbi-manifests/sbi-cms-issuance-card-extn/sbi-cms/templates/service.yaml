@@ -1,0 +1,22 @@
+---
+# Source: sbi-cms/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sbi-cms-issuance-card-extn
+  namespace: sbi
+  labels:
+    app: sbi-cms-issuance-card-extn
+  annotations: 
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8061-8061'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - protocol: TCP
+      port: 8061
+      targetPort: 8061
+      name: 8061-8061
+  selector:
+    app: sbi-cms-issuance-card-extn
+  type: ClusterIP

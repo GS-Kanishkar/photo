@@ -1,0 +1,52 @@
+---
+# Source: sbi-cms/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sbi-cms-issuance-hsm-connect
+  namespace: sbi
+  labels:
+    app: sbi-cms-issuance-hsm-connect
+    intent: apps
+spec:
+  selector:
+    matchLabels:
+      app: sbi-cms-issuance-hsm-connect
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sbi-cms-issuance-hsm-connect
+        intent: apps
+      annotations:
+        kubernetes.io/psp: eks.privileged
+        "fss.com/app-configmap-hash": e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:
+      volumes:
+      containers:
+        - name: sbi-cms-issuance-hsm-connect
+          image: 
+          volumeMounts:
+          ports:
+            - containerPort: 8062
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: sbi-cms-issuance-hsm-connect
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      nodeSelector:
+        app: sbi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

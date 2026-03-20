@@ -1,0 +1,52 @@
+---
+# Source: sbi-cms/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sbi-cms-global-service
+  namespace: sbi
+  labels:
+    app: sbi-cms-global-service
+    intent: apps
+spec:
+  selector:
+    matchLabels:
+      app: sbi-cms-global-service
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sbi-cms-global-service
+        intent: apps
+      annotations:
+        kubernetes.io/psp: eks.privileged
+        "fss.com/app-configmap-hash": d12399be81531e244703dab28c0eb8a0d56d57932c49c09b6fc16f70f62cb326
+    spec:
+      volumes:
+      containers:
+        - name: sbi-cms-global-service
+          image: 736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-global-service:sbi-uat.v32
+          volumeMounts:
+          ports:
+            - containerPort: 8050
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: sbi-cms-global-service
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      nodeSelector:
+        app: sbi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

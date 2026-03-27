@@ -1,0 +1,26 @@
+{{ if eq .Values.service.required true }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ tpl $.Values.deployment.namespace $ }}
+  labels:
+    app: {{ .Values.deployment.name }}
+  annotations: 
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '{{ .Values.deployment.containerPort }}-{{ .Values.deployment.containerPort }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    {{- range $name, $value := .Values.service.ports }}
+    - protocol: {{ $value.protocol }}
+      port: {{ $value.port }}
+      targetPort: {{ $value.targetPort }}
+      name: {{ $value.name }}
+    {{- end }}
+  selector:
+    app: {{ .Values.deployment.name }}
+  type: {{ .Values.service.type }}
+
+{{- end }}

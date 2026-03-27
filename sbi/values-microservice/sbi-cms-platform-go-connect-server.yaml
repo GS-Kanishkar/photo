@@ -1,0 +1,104 @@
+deployment:
+  name: sbi-cms-platform-go-connect-server
+  namespace: "{{ $.Values.environment.namespace }}"
+  containerPort: 8291
+  nodeSelector: "{{ $.Values.environment.nodeSelector }}"
+
+containers:
+  image: "{{ $.Values.images.sbi_cms_platform_go_connect_server }}"
+
+  ports:
+  - containerPort: 8291
+    protocol: TCP
+  - containerPort: 6001
+    protocol: TCP
+
+opentelementry:
+  required: false
+
+service:
+  required: true
+  ports:
+  - name: 8291-8291
+    protocol: TCP
+    port: 8291
+    targetPort: 8291
+  - name: 6001-6001
+    protocol: TCP
+    port: 6001
+    targetPort: 6001
+  type: NodePort
+
+configmap:
+  required: true
+
+hpa:
+  minReplicas: "{{ $.Values.hpas.minreplica }}"
+  maxReplicas: "{{ $.Values.hpas.maxreplica }}"
+
+ingress:
+  required: true
+  ingressClassName: cilium
+  paths:
+    - path: /sbi/goconnect-server
+      backendServiceName: sbi-cms-platform-go-connect-server
+      backendServicePort: 8291
+
+route:
+  required: false
+  path: /sbi/goconnect-server
+  targetPort: 8291  
+
+applicationConfig:
+  APP_NAME: "GO-CONNECT-SERVER"
+  APP_DESC: "This application will connect on TCP Protocol with other application. This is written in GO."
+  APP_COPYRIGHT: "© 2023 Financial Software and Systems"
+  APP_ENV: "{{ $.Values.environment.env_name}}"
+  SERVICE_NAME: "go-connect-server"
+  PORT: "8290"
+  NATS_CONNECTION_URL: "{{ $.Values.url.NATS_URL }}"
+  NATS_ALT_TOPIC_SUFFIX: ".ALT"
+  IS_MASK: "N"
+  UAM_API_PROTOCOL: "{{ $.Values.url.UAM_API_PROTOCOL }}"
+  UAM_API_DNS: "{{ $.Values.url.UAM_API_DNS }}"
+  UAM_API_ENDPOINT: "{{ $.Values.url.UAM_API_ENDPOINT }}"
+  UAM_CHECK_REQUIRED: "{{ $.Values.url.UAM_CHECK_REQUIRED }}"
+  DATASOURCE_HOST: "{{ $.Values.url.DATASOURCE_HOST }}"
+  DATASOURCE_PORT: "{{ $.Values.url.DATASOURCE_PORT }}"
+  DATASOURCE_DB: "{{ $.Values.url.DATASOURCE_DB }}"
+  DATASOURCE_SCHEMA: "core_goconnect"
+  DB_SSL_MODE: "{{ $.Values.url.DB_SSL_MODE }}"
+  DATASOURCE_USERNAME: "{{ $.Values.url.DATASOURCE_USERNAME }}"
+  DATASOURCE_PASSWORD: "{{ $.Values.url.DATASOURCE_PASSWORD }}"
+  DATASOURCE_DBTYPE: "{{ $.Values.url.DATASOURCE_DBTYPE }}"
+  JASYPT_PASSWORD: "{{ $.Values.url.JASYPT_PASSWORD }}"
+  OTEL_SERVICE_NAME: "GO_CONNECT_SERVER"
+  INSECURE_MODE: "true"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "{{ $.Values.url.OTEL_EXPORTER_OTLP_ENDPOINT }}"
+  GOCONNECT_PRODUCT_LIST_URL: "{{ $.Values.url.GOCONNECT_PRODUCT_LIST_URL }}"
+  SERVICE_API_KEY: "{{ $.Values.url.SERVICE_API_KEY }}"
+  CONNECT_RETRY_ATTEMPTS: "{{ $.Values.url.CONNECT_RETRY_ATTEMPTS }}"
+  CONNECT_RETRY_INTERVAL: "{{ $.Values.url.CONNECT_RETRY_INTERVAL }}"
+  SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM: "{{ $.Values.url.SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM }}"
+  SECURITY_SYMMETRIC_ENCDEC_KEY: "{{ $.Values.url.SECURITY_SYMMETRIC_ENCDEC_KEY }}"
+  SECURITY_SYMMETRIC_ENCDEC_KEY_ALGORITHM: "AES"
+  APP_CONTEXT_PATH: "platform/goconnect-server"
+  INTERCHANGE_ID: "9"
+  TENANT_CODE: "KVB"
+  NETWORK_NAME: "TANGO"
+  PRODUCT_CODE: "CMS001"
+  CONNECTION_NAME: "TANGO1"
+  PRODUCT_APP_URL: "{{ $.Values.url.PRODUCT_APP_URL }}"
+  ALERT_APPLICABLE: "{{ $.Values.config.ALERT_APPLICABLE }}"
+  IS_ISO_HEADER_REQUIRED: "Y"
+  IS_ENC_REQUEST_RESPONSE: "Y"
+
+mysqlhost: true
+redishost: false
+kafkahost: true
+publickeycert:
+  required: false
+serviceAccount:
+  required: true
+  roleARN: "{{ $.Values.role.arn }}"  
+  

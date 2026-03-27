@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ tpl .Values.deployment.namespace $ }}
+  labels:
+    app: {{ .Values.deployment.name }}
+    intent: apps
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.deployment.name }}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ .Values.deployment.name }}
+        intent: apps
+      annotations:
+        kubernetes.io/psp: eks.privileged
+        "fss.com/app-configmap-hash": {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      {{- if .Values.serviceAccount.required }}
+      serviceAccountName: {{ .Values.deployment.name }}-sa
+      {{- end }}
+      volumes:
+        {{- if .Values.opentelementry.required }}
+        - name: otel-agent
+          emptyDir: {}
+        {{- end }}
+        {{- if .Values.publickeycert.required }}
+        - name: key-cert-vol
+          configMap:
+            name: public-private-key
+        - name: visa-npci-key-configmap-volume
+          configMap:
+            name: visa-npci-key-configmap
+        - name: dcms-keys-volume
+          configMap:
+            name: dcms-keys-configmap
+        - name: sbi-keys-volume
+          configMap:
+            name: sbi-keys-configmap         
+        {{- end }}
+      {{- if .Values.opentelementry.required }}
+      initContainers:
+        - name: install-otel-agent
+          image: 736483234466.dkr.ecr.ap-south-1.amazonaws.com/baseimage:otel
+          volumeMounts:
+            - name: otel-agent
+              mountPath: /otel-agent
+          command: ["cp", "/otel/opentelemetry-javaagent.jar", "/otel-agent"]
+      {{- end }}
+      containers:
+        - name: {{ .Values.deployment.name }}
+          image: {{ tpl .Values.containers.image $ }}
+          volumeMounts:
+            {{- if .Values.publickeycert.required }}
+            - name: key-cert-vol
+              mountPath: /config
+            - name: visa-npci-key-configmap-volume
+              mountPath: /data
+            - name: dcms-keys-volume
+              mountPath: /vol
+            - name: sbi-keys-volume
+              mountPath: /sbi              
+            {{- end }}
+            {{- if .Values.opentelementry.required }}
+            - name: otel-agent
+              mountPath: /otel-agent
+            {{- end }}
+          ports:
+            {{- range $value := .Values.containers.ports }}
+            - containerPort: {{ $value.containerPort }}
+              protocol: {{ $value.protocol }}
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.deployment.name }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      nodeSelector:
+        app: {{ tpl .Values.deployment.nodeSelector $ }}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

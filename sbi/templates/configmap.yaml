@@ -1,0 +1,33 @@
+{{ if eq .Values.configmap.required true }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.deployment.name }}
+data:
+  {{- if .Values.mysqlhost }}
+  MYSQL_HOST: {{ .Values.database.MYSQL_HOST | quote }}
+  {{- end }}
+
+  {{- if .Values.kafkahost }}
+  KAFKA_HOST: {{ .Values.kafka.KAFKA_HOST | quote }}
+  KAFKA_PORT: "9092"
+  {{- end }}
+
+  {{- if .Values.redishost }}
+  REDIS_HOST: {{ .Values.redis.REDIS_HOST | quote }}
+  {{- end }}
+  {{- range $key, $value := .Values.applicationConfig }}
+  {{ $key }}: {{ tpl $value $ | quote }}
+  {{- end }}
+{{- if .Values.opentelementry.required }}
+  JAVA_TOOL_OPTIONS: |
+      -javaagent:/otel-agent/opentelemetry-javaagent.jar -Dio.opentelemetry.javaagent.slf4j.simpleLogger.defaultLogLevel=off
+  OTEL_METRICS_EXPORTER: none
+  OTEL_LOGS_EXPORTER: none
+  OTEL_TRACES_EXPORTER: otlp,logging
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ $.Values.environment.tempo_endpoint }}
+  OTEL_SERVICE_NAME: {{ .Values.deployment.name }}
+  KUBE_POD_NAME: "metadata.name"
+  OTEL_RESOURCE_ATTRIBUTES: app={{ .Values.deployment.name }},env={{ $.Values.environment.env_name }}
+{{- end }}
+{{- end }}

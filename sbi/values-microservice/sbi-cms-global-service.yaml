@@ -1,0 +1,71 @@
+deployment:
+  name: sbi-cms-global-service
+  namespace: "{{ $.Values.environment.namespace }}"
+  containerPort: 8050
+  nodeSelector: "{{ $.Values.environment.nodeSelector }}"
+
+containers:
+  image: "{{ $.Values.images.sbi_cms_global_service }}"
+
+  ports:
+  - containerPort: 8050
+    protocol: TCP
+
+opentelementry:
+  required: false
+
+service:
+  required: true
+  ports:
+  - name: 8050-8050
+    protocol: TCP
+    port: 8050
+    targetPort: 8050
+  type: ClusterIP
+
+configmap:
+  required: true
+
+hpa:
+  minReplicas: "{{ $.Values.hpas.minreplica }}"
+  maxReplicas: "{{ $.Values.hpas.maxreplica }}"
+
+ingress:
+  required: true
+  ingressClassName: cilium
+  paths:
+    - path: /sbi/global-service
+      backendServiceName: sbi-cms-global-service
+      backendServicePort: 8050
+
+route:
+  required: true
+  path: /sbi/global-service
+  targetPort: 8050   
+
+applicationConfig:
+  TOKEN_SIGNING_KEY: "{{ $.Values.security.TOKEN_SIGNING_KEY }}"
+  TOKEN_EXPIRY: "{{ $.Values.security.TOKEN_EXPIRY }}"
+  SYSTEM_USER: "{{ $.Values.security.SYSTEM_USER }}"
+  CMS_USER_ACCESS_MANAGEMENT_API: "{{ $.Values.services.CMS_USER_ACCESS_MANAGEMENT_API }}"
+  JASYPT_PASSWORD: "{{ $.Values.url.JASYPT_PASSWORD }}"
+  ALLOWED_ORIGINS: "{{ $.Values.cors.ALLOWED_ORIGINS }}"
+  POSTGRES_HOST: "{{ $.Values.database.postgres.POSTGRES_HOST }}"
+  POSTGRES_USER: "{{ $.Values.database.postgres.POSTGRES_USER }}"
+  POSTGRES_PASSWORD: "{{ $.Values.database.postgres.POSTGRES_PASSWORD }}"
+  GLOBAL_DATA_SCHEMA: "{{ $.Values.schemaNames.GLOBAL_DATA_SCHEMA }}"
+  ORACLE_PORT: "{{ $.Values.database.oracle.ORACLE_PORT }}"
+  ORACLE_SERVICE_NAME: "{{ $.Values.database.oracle.ORACLE_SERVICE_NAME }}"
+  SCHEMA: "{{ $.Values.schemaNames.GLOBAL_DATA_SCHEMA }}"
+  ORACLE_HOST: "{{ $.Values.database.oracle.ORACLE_HOST }}"
+  ORACLE_USER: "{{ $.Values.database.oracle.ORACLE_USER }}"
+  ORACLE_PASSWORD: "{{ $.Values.database.oracle.ORACLE_PASSWORD }}"
+
+mysqlhost: true
+redishost: false
+kafkahost: false
+publickeycert:
+  required: false
+serviceAccount:
+  required: false
+  roleARN: "{{ $.Values.role.arn }}"  

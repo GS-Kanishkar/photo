@@ -1,0 +1,76 @@
+deployment:
+  name: sbi-cms-mapping
+  namespace: "{{ $.Values.environment.namespace }}"
+  containerPort: 8080
+  nodeSelector: "{{ $.Values.environment.nodeSelector }}"
+
+containers:
+  image: "{{ $.Values.images.sbi_cms_mapping }}"
+
+  ports:
+    - containerPort: 8080
+      protocol: TCP
+
+opentelementry:
+  required: false
+
+service:
+  required: true
+  ports:
+    - name: 8080-8080
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+configmap:
+  required: true
+
+hpa:
+  minReplicas: "{{ $.Values.hpas.minreplica }}"
+  maxReplicas: "{{ $.Values.hpas.maxreplica }}"
+
+ingress:
+  required: true
+  ingressClassName: cilium
+  paths:
+    - path: /sbi/sbi-mapping
+      backendServiceName: sbi-cms-mapping
+      backendServicePort: 8080
+
+route:
+  required: true
+  path: /sbi/sbi-mapping
+  targetPort: 8080
+
+applicationConfig:
+  SERVER_PORT: "8080"
+  SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM: "{{ $.Values.config.SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM }}"
+  SECURITY_SYMMETRIC_ENCDEC_KEY: "{{ $.Values.config.SECURITY_SYMMETRIC_ENCDEC_KEY }}"
+  SECURITY_SYMMETRIC_ENCDEC_KEY_ALGORITHM: "{{ $.Values.config.SECURITY_SYMMETRIC_ENCDEC_KEY_ALGORITHM }}"
+  SECURITY_SYMMETRIC_ENCDEC_KEY_SIZE: "{{ $.Values.config.SECURITY_SYMMETRIC_ENCDEC_KEY_SIZE }}"
+  SECURITY_AES_ALGO: "{{ $.Values.config.SECURITY_AES_ALGO }}"
+  SECURITY_AES_KEY_SIZE: "{{ $.Values.config.SECURITY_AES_KEY_SIZE }}"
+  SECURITY_RSA_ALGO: "{{ $.Values.config.SECURITY_RSA_ALGO }}"
+  KEY_PROVIDER_TYPE: "{{ $.Values.config.KEY_PROVIDER_TYPE }}"
+  KEY_JKS_PATH: "{{ $.Values.config.KEY_JKS_PATH }}"
+  KEY_JKS_PASSWORD: "{{ $.Values.config.KEY_JKS_PASSWORD }}"
+  KEY_JKS_ALIAS: "{{ $.Values.config.KEY_JKS_ALIAS }}"
+  DCMS_BASEPATH_NEW_CARD_MANAGEMENT: "{{ $.Values.config.DCMS_BASEPATH_NEW_CARD_MANAGEMENT }}"
+  DCMS_BASEPATH_NEW_CARD: "{{ $.Values.config.DCMS_BASEPATH_NEW_CARD }}"
+  DCMS_BASEPATH_CBS: "{{ $.Values.config.DCMS_BASEPATH_CBS }}"
+  DCMS_BASEPATH_OLD_EIS: "{{ $.Values.config.DCMS_BASEPATH_OLD_EIS }}"
+  DCMS_BASEPATH_OLD_VIRTUAL: "{{ $.Values.config.DCMS_BASEPATH_OLD_VIRTUAL }}"
+  SECURITY_ASYMMETRIC_PRIVATEKEY_FILE: "{{ $.Values.config.SECURITY_ASYMMETRIC_PRIVATEKEY_FILE }}"
+  SECURITY_ASYMMETRIC_PUBLICKEY_FILE: "{{ $.Values.config.SECURITY_ASYMMETRIC_PUBLICKEY_FILE }}"
+mysqlhost: false
+redishost: false
+kafkahost: false
+
+publickeycert:
+  required: true
+
+serviceAccount:
+  required: true
+  roleARN: "{{ $.Values.role.arn }}"
+

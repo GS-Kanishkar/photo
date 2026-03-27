@@ -1,0 +1,106 @@
+deployment:
+  name: sbi-cms-platform-dev-gc-base24-classic-d2
+  namespace: "{{ $.Values.environment.namespace }}"
+  containerPort: 8290
+  nodeSelector: "{{ $.Values.environment.nodeSelector }}"
+
+containers:
+  image: "{{ $.Values.images.sbi_cms_platform_go_connect }}"
+
+  ports:
+  - containerPort: 8290
+    protocol: TCP
+
+opentelementry:
+  required: false
+
+service:
+  required: true
+  ports:
+  - name: 8290-8290
+    protocol: TCP
+    port: 8290
+    targetPort: 8290
+  type: ClusterIP
+
+configmap:
+  required: true
+
+hpa:
+  minReplicas: "{{ $.Values.hpas.minreplica }}"
+  maxReplicas: "{{ $.Values.hpas.maxreplica }}"
+
+ingress:
+  required: true
+  ingressClassName: cilium
+  paths:
+    - path: /sbi/go-connect-base24-classic-d2
+      backendServiceName: sbi-cms-platform-dev-gc-base24-classic-d2
+      backendServicePort: 8290
+
+route:
+  required: true
+  path: /sbi/go-connect-base24-classic-d2
+  targetPort: 8290  
+
+applicationConfig:
+  APP_NAME: "GO-CONNECT-CLIENT"
+  APP_DESC: "This application will connect on TCP Protocol with other application. This is written in GO."
+  APP_COPYRIGHT: "© 2023 Financial Software and Systems"
+  APP_ENV: "{{ $.Values.environment.env_name}}"
+  PORT: "8290"
+  NATS_CONNECTION_URL: "{{ $.Values.url.NATS_URL }}"
+  NATS_ALT_TOPIC_SUFFIX: ".ALT"
+  IS_MASK: "N"
+  SERVICE_NAME: "go-connect"
+  UAM_API_PROTOCOL: "{{ $.Values.url.UAM_API_PROTOCOL }}"
+  UAM_API_DNS: "{{ $.Values.url.UAM_API_DNS }}"
+  UAM_API_ENDPOINT: "{{ $.Values.url.UAM_API_ENDPOINT }}"
+  UAM_CHECK_REQUIRED: "{{ $.Values.url.UAM_CHECK_REQUIRED }}"
+  DATASOURCE_HOST: "{{ $.Values.url.DATASOURCE_HOST }}"
+  DATASOURCE_PORT: "{{ $.Values.url.DATASOURCE_PORT }}"
+  DATASOURCE_DB: "{{ $.Values.url.DATASOURCE_DB }}"
+  DATASOURCE_SCHEMA: "{{ $.Values.url.DATASOURCE_SCHEMA_PREFIX }}GO_CONNECT"
+  DB_SSL_MODE: "{{ $.Values.url.DB_SSL_MODE }}"
+  DATASOURCE_USERNAME: "{{ $.Values.url.DATASOURCE_USERNAME }}"
+  DATASOURCE_PASSWORD: "{{ $.Values.url.DATASOURCE_PASSWORD }}"
+  DATASOURCE_DBTYPE: "{{ $.Values.url.DATASOURCE_DBTYPE }}"
+  JASYPT_PASSWORD: "{{ $.Values.url.JASYPT_PASSWORD }}"
+  OTEL_SERVICE_NAME: "GO_CONNECT"
+  INSECURE_MODE: "true"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "{{ $.Values.url.OTEL_EXPORTER_OTLP_ENDPOINT }}"
+  GOCONNECT_PRODUCT_LIST_URL: "{{ $.Values.url.GOCONNECT_PRODUCT_LIST_URL }}"
+  SERVICE_API_KEY: "{{ $.Values.url.SERVICE_API_KEY }}"
+  CONNECT_RETRY_ATTEMPTS: "{{ $.Values.url.CONNECT_RETRY_ATTEMPTS }}"
+  CONNECT_RETRY_INTERVAL: "{{ $.Values.url.CONNECT_RETRY_INTERVAL }}"
+  SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM: "{{ $.Values.url.SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM }}"
+  SECURITY_SYMMETRIC_ENCDEC_KEY: "{{ $.Values.url.SECURITY_SYMMETRIC_ENCDEC_KEY }}"
+  SECURITY_SYMMETRIC_ENCDEC_KEY_ALGORITHM: "AES"
+  APP_CONTEXT_PATH: "/sbi/go-connect-base24-classic-d2"
+  REDIS_HOST: "{{ $.Values.redis.REDIS_HOST }}"
+  REDIS_PORT: "6379"
+  ALERT_APPLICABLE: "{{ $.Values.config.ALERT_APPLICABLE }}"
+  IS_REDIS_AVLBL_FOR_LOCKING: "N"
+  USE_TLS: "{{ $.Values.url.USE_TLS_BASE24_CLASSIC_D2 }}"
+  TENANT_CODE: "SBI"
+  PRODUCT_CODE: "CMS001"
+  CONNECTION_NAME: "BASE24-CLASSIC-D2"
+  PRODUCT_APP_URL: "{{ $.Values.url.PRODUCT_APP_URL }}"
+  CLIENT_CERT_PATH: "{{ $.Values.url.CLIENT_CERT_PATH }}"
+  CLIENT_KEY_PATH: "{{ $.Values.url.CLIENT_KEY_PATH }}"
+  CA_CERT_PATH: "{{ $.Values.url.CA_CERT_PATH }}"
+  CA_CERT_PROVIDER_SERVER: "{{ $.Values.url.CA_CERT_PROVIDER_SERVER }}"
+  IS_ISO_HEADER_REQUIRED: "Y"
+  IS_ENC_REQUEST_RESPONSE: "N"
+
+mysqlhost: true
+redishost: false
+kafkahost: true
+
+publickeycert:
+  required: false
+  
+serviceAccount:
+  required: true
+  roleARN: "{{ $.Values.role.arn }}"  
+  

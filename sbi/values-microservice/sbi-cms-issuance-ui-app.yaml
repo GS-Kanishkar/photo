@@ -1,0 +1,64 @@
+deployment:
+  name: sbi-cms-issuance-ui-app
+  namespace: "{{ $.Values.environment.namespace }}"
+  containerPort: 8080
+  nodeSelector: "{{ $.Values.environment.nodeSelector }}"
+
+containers:
+  image: "{{ $.Values.images.sbi_cms_issuance_ui_app }}"
+
+  ports:
+  - containerPort: 8080
+    protocol: TCP
+
+opentelementry:
+  required: false
+
+service:
+  required: true
+  ports:
+  - name: 80-80
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: ClusterIP
+
+configmap:
+  required: true
+
+hpa:
+  minReplicas: "{{ $.Values.hpas.minreplica }}"
+  maxReplicas: "{{ $.Values.hpas.maxreplica }}"
+
+ingress:
+  required: true
+  ingressClassName: cilium
+  paths:
+    - path: /sbi
+      backendServiceName: sbi-cms-issuance-ui-app
+      backendServicePort: 80
+
+route:
+  required: true
+  path: /sbi
+  targetPort: 8080 
+
+applicationConfig:
+  CMS_COMMON_BASE_URL: "{{ $.Values.host.external_host }}"
+  CMS_SECRET_KEY: "your-16-byte-key"
+  GO_CONNECT_BASE_URL: "{{ $.Values.url.GO_CONNECT_BASE_URL }}"
+  HIDE_PRODUCT_FEATURE: "{{ $.Values.config.HIDE_PRODUCT_FEATURE }}"
+  ALERT_APPLICABLE: "{{ $.Values.config.ALERT_APPLICABLE }}"
+  GO_CONNECT_JAVA_URL: "{{ $.Values.url.GO_CONNECT_JAVA_URL }}"
+  GO_CONNECT_SERVER_URL: "{{ $.Values.url.GO_CONNECT_SERVER_URL }}"
+
+mysqlhost: false
+redishost: false
+kafkahost: false
+publickeycert:
+  required: false
+serviceAccount:
+  required: false
+  roleARN: "{{ $.Values.role.arn }}"  
+  
+  

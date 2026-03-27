@@ -1,0 +1,136 @@
+deployment:
+  name: sbi-cms-issuance-card-extn
+  namespace: "{{ $.Values.environment.namespace }}"
+  containerPort: 8061
+  nodeSelector: "{{ $.Values.environment.nodeSelector }}"
+
+containers:
+  image: "{{ $.Values.images.sbi_cms_issuance_card_extn }}"
+
+  ports:
+  - containerPort: 8061
+    protocol: TCP
+
+opentelementry:
+  required: false
+
+service:
+  required: true
+  ports:
+  - name: 8061-8061
+    protocol: TCP
+    port: 8061
+    targetPort: 8061
+  type: ClusterIP
+
+configmap:
+  required: true
+
+hpa:
+  minReplicas: "{{ $.Values.hpas.minreplica }}"
+  maxReplicas: "{{ $.Values.hpas.maxreplica }}"
+
+ingress:
+  required: true
+  ingressClassName: cilium
+  paths:
+    - path: /sbi/card-issuance
+      backendServiceName: sbi-cms-issuance-card-extn
+      backendServicePort: 8061
+
+route:
+  required: true
+  path: /sbi/card-issuance
+  targetPort: 8061
+
+applicationConfig:
+  CMS_SUPPORT_API: "{{ $.Values.services.CMS_SUPPORT_API1 }}"
+  CMS_PROGRAM_API: "{{ $.Values.services.CMS_PROGRAM_API1 }}"
+  CMS_SCHEDULER_API: "{{ $.Values.services.CMS_SCHEDULER_API }}"
+  CMS_ALERT_API: "{{ $.Values.services.CMS_ALERT_API }}"
+  CMS_BATCH_SCHEDULER_API: "{{ $.Values.services.CMS_BATCH_SCHEDULER_API }}"
+  CMS_CARD_MANAGEMENT_API: "{{ $.Values.services.CARD_MANAGEMENT }}"
+  GLOBAL_SERVICE_API: "{{ $.Values.services.GLOBAL_SERVICE_API1 }}"
+  CMS_HSM_CONNECT_API: "{{ $.Values.services.CMS_HSM_CONNECT_API }}"
+  BLAZE_INTEGRATOR_API_URL: "{{ $.Values.services.BLAZE_INTEGRATOR_API_URL }}"
+  SECURITY_ASYMMETRIC_PRIVATEKEY_FILE:  "{{ $.Values.config.SECURITY_ASYMMETRIC_PRIVATEKEY_FILE }}"
+  SECURITY_ASYMMETRIC_PUBLICKEY_FILE: "{{ $.Values.config.SECURITY_ASYMMETRIC_PUBLICKEY_FILE }}"
+  VISA_PUBLICKEY_FILE: "/data/visa_publickey.pem"
+  VISA_PRIVATEKEY_FILE: "/data/visa_privatekey.pem"
+  NPCI_PUBLICKEY_FILE: "/data/npci_publickey.pem"
+  NPCI_PRIVATEKEY_FILE: "/data/npci_privatekey.pem"
+  MYSQL_HOST: "{{ $.Values.database.MYSQL_HOST }}"
+  MYSQL_USER: "{{ $.Values.database.mysql.MYSQL_USER }}"
+  MYSQL_PASSWORD: "{{ $.Values.database.mysql.MYSQL_PASSWORD }}"
+  MYSQL_SCHEMA_PREFIX: "{{ $.Values.database.mysql.MYSQL_SCHEMA_PREFIX }}"
+  ORACLE_HOST: "{{ $.Values.database.oracle.ORACLE_HOST }}"
+  ORACLE_USER: "{{ $.Values.database.oracle.ORACLE_USER }}"
+  ORACLE_PASSWORD: "{{ $.Values.database.oracle.ORACLE_PASSWORD }}"
+  ORACLE_SCHEMA_PREFIX: "{{ $.Values.database.oracle.ORACLE_SCHEMA_PREFIX }}"
+  POSTGRES_HOST: "{{ $.Values.database.postgres.POSTGRES_HOST }}"
+  POSTGRES_USER: "{{ $.Values.database.postgres.POSTGRES_USER }}"
+  POSTGRES_PASSWORD: "{{ $.Values.database.postgres.POSTGRES_PASSWORD }}"
+  POSTGRES_SCHEMA_PREFIX: "{{ $.Values.database.postgres.POSTGRES_SCHEMA_PREFIX }}"
+  KEY_ENC_KEY: "{{ $.Values.security.KEY_ENC_KEY }}"
+  SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM: "{{ $.Values.security.SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM }}"
+  TOKEN_SIGNING_KEY: "{{ $.Values.security.TOKEN_SIGNING_KEY }}"
+  TOKEN_EXPIRY: "{{ $.Values.security.TOKEN_EXPIRY }}"
+  SYSTEM_USER: "{{ $.Values.security.SYSTEM_USER }}"
+  CMS_USER_ACCESS_MANAGEMENT_API: "{{ $.Values.services.CMS_USER_ACCESS_MANAGEMENT_API }}"
+  JASYPT_PASSWORD: "{{ $.Values.url.JASYPT_PASSWORD }}"
+  HASH_ALGORITHM: "{{ $.Values.security.HASH_ALGORITHM }}"
+  HASH_KEY: "{{ $.Values.security.HASH_KEY }}"
+  ACTIVE_DB_PROFILE: "{{ $.Values.database.CARD_EXTN_ACTIVE_DB_PROFILE }}"
+  ALLOWED_ORIGINS: "{{ $.Values.cors.ALLOWED_ORIGINS }}"
+  CMS_CARD_ISSUANCE_SCHEMA: "{{ $.Values.schemaNames.CMS_CARD_ISSUANCE_SCHEMA }}"
+  BUCKET_NAME: "{{ $.Values.security.BUCKET_NAME }}"
+  INTEGRATION_KEY: "{{ $.Values.security.INTEGRATION_KEY }}"
+  DEFAULT_TENANT_CODE: "{{ $.Values.config.DEFAULT_TENANT_CODE }}"
+  TENANT_ACCESS_CHECK_APPLICABLE: "{{ $.Values.config.TENANT_ACCESS_CHECK_APPLICABLE }}"
+  DB_PROFILE: "{{ $.Values.database.DB_PROFILE }}"
+  GO_CONNECT_SERVER: "{{ $.Values.services.GO_CONNECT_SERVER }}"
+  X_API_KEY:  "{{ $.Values.services.GO_CONNECT_AUTH }}"
+  ENABLE_HSM: "{{ $.Values.config.ENABLE_HSM }}"
+  TOGGLE_API: "{{ $.Values.url.TOGGLE_API }}"
+  KAFKA_STATUS:  "{{ $.Values.kafka.KAFKA_STATUS }}"
+  ORACLE_PORT: "{{ $.Values.database.oracle.ORACLE_PORT }}"
+  ORACLE_SERVICE_NAME: "{{ $.Values.database.oracle.ORACLE_SERVICE_NAME }}"
+  SCHEMA: "{{ $.Values.schemaNames.CMS_CARD_ISSUANCE_SCHEMA }}"
+  ALERT_APPLICABLE: "{{ $.Values.config.ALERT_APPLICABLE }}"
+  CAF_APPLICABLE: "{{ $.Values.config.CAF_APPLICABLE }}"
+  CAF_ENQUIRY_URL_SBI: "{{ $.Values.config.CAF_ENQUIRY_URL_SBI }}"
+  CAF_ENQUIRY_URL_SBF: "{{ $.Values.config.CAF_ENQUIRY_URL_SBF }}"
+  CAF_UPDATE_URL_SBI: "{{ $.Values.config.CAF_UPDATE_URL_SBI }}"
+  CAF_UPDATE_URL_SBF: "{{ $.Values.config.CAF_UPDATE_URL_SBF }}"
+  GOCONNECT_SECURE_URL: "{{ $.Values.services.GOCONNECT_SECURE_URL }}"
+  FETCH_CBS_COMMUNICATION_DETAILS: "{{ $.Values.config.FETCH_CBS_COMMUNICATION_DETAILS }}"
+  SBI_MAPPING_BASEPATH: "{{ $.Values.config.SBI_MAPPING_BASEPATH }}"
+  DATA_MIGRATION_FLAG: "{{ $.Values.database.migration.DATA_MIGRATION_FLAG }}"   
+  DATA_MIGRATION_ORACLE_HOST: "{{ $.Values.database.migration.DATA_MIGRATION_ORACLE_HOST }}"   
+  DATA_MIGRATION_ORACLE_PORT: "{{ $.Values.database.migration.DATA_MIGRATION_ORACLE_PORT }}"
+  DATA_MIGRATION_ORACLE_SERVICE_NAME: "{{ $.Values.database.migration.DATA_MIGRATION_ORACLE_SERVICE_NAME }}"
+  DATA_MIGRATION_ORACLE_USER: "{{ $.Values.database.migration.ATA_MIGRATION_ORACLE_USE }}"
+  DATA_MIGRATION_ORACLE_PASSWORD: "{{ $.Values.database.migration.DATA_MIGRATION_ORACLE_PASSWORD }}"
+  DATA_MIGRATION_CMS_CARD_SCHEMA_NAME: "{{ $.Values.database.migration.DATA_MIGRATION_CMS_CARD_SCHEMA_NAME }}"
+  DATA_MIGRATION_CMS_PROGRAM_CFG_SCHEMA_NAME: "{{ $.Values.database.migration.DATA_MIGRATION_CMS_PROGRAM_CFG_SCHEMA_NAME }}"
+  SFTP_HOST: "{{ $.Values.sftp.SFTP_HOST }}" 
+  SFTP_PASS: "{{ $.Values.sftp.SFTP_PASS }}" 
+  SFTP_PORT: "{{ $.Values.sftp.SFTP_PORT }}" 
+  SFTP_REMOTE_DIR: "{{ $.Values.sftp.SFTP_REMOTE_DIR }}" 
+  SFTP_USER_ID: "{{ $.Values.sftp.SFTP_USER_ID }}"
+  KAFKA_HOST: "{{ $.Values.kafka.KAFKA_HOST }}"
+  KAFKA_PORT: "{{ $.Values.kafka.KAFKA_PORT }}"
+  CUSTOMER_ONBOARD_TEMPLATE: CUSTOMER_ONBOARDING_PHY
+  SECURITY_ASYMMETRIC_CBS_PRIVATEKEY_FILE: "{{ $.Values.config.SECURITY_ASYMMETRIC_CBS_PRIVATEKEY_FILE }}"
+  SECURITY_ASYMMETRIC_CBS_PUBLICKEY_FILE: "{{ $.Values.config.SECURITY_ASYMMETRIC_CBS_PUBLICKEY_FILE }}"
+
+mysqlhost: true
+redishost: false
+kafkahost: true
+
+publickeycert:
+  required: true
+
+serviceAccount:
+  required: true
+  roleARN: "{{ $.Values.role.arn }}"

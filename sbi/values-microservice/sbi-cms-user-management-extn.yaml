@@ -1,0 +1,87 @@
+deployment:
+  name: sbi-cms-user-management-extn
+  namespace: "{{ $.Values.environment.namespace }}"
+  containerPort: 7071
+  nodeSelector: "{{ $.Values.environment.nodeSelector }}"
+
+containers:
+  image: "{{ $.Values.images.sbi_cms_user_management_extn }}"
+
+  ports:
+  - containerPort: 7071
+    protocol: TCP
+
+opentelementry:
+  required: false
+
+service:
+  required: true
+  ports:
+  - name: 7071-7071
+    protocol: TCP
+    port: 7071
+    targetPort: 7071
+  type: ClusterIP
+
+configmap:
+  required: true
+
+hpa:
+  minReplicas: "{{ $.Values.hpas.minreplica }}"
+  maxReplicas: "{{ $.Values.hpas.maxreplica }}"
+
+ingress:
+  required: true
+  ingressClassName: cilium
+  paths:
+    - path: /sbi/usermanagement
+      backendServiceName: sbi-cms-user-management-extn
+      backendServicePort: 7071
+
+route:
+  required: true
+  path: /sbi/usermanagement
+  targetPort: 7071   
+
+applicationConfig:
+  CMS_PROGRAM_API: "{{ $.Values.services.CMS_PROGRAM_API1 }}"
+  CMS_ALERT_API: "{{ $.Values.services.CMS_ALERT_API }}"
+  TOKEN_SIGNING_KEY: "{{ $.Values.security.TOKEN_SIGNING_KEY }}"
+  TOKEN_EXPIRY: "{{ $.Values.security.TOKEN_EXPIRY }}"
+  SYSTEM_USER: "{{ $.Values.security.SYSTEM_USER }}"
+  CMS_USER_ACCESS_MANAGEMENT_API: "{{ $.Values.services.CMS_USER_ACCESS_MANAGEMENT_API }}"
+  JASYPT_PASSWORD: "{{ $.Values.url.JASYPT_PASSWORD }}"
+  MYSQL_HOST: "{{ $.Values.database.MYSQL_HOST }}"
+  MYSQL_USER: "{{ $.Values.database.mysql.MYSQL_USER }}"
+  MYSQL_PASSWORD: "{{ $.Values.database.mysql.MYSQL_PASSWORD }}"
+  MYSQL_SCHEMA_PREFIX: "{{ $.Values.database.mysql.MYSQL_SCHEMA_PREFIX }}"
+  ORACLE_HOST: "{{ $.Values.database.oracle.ORACLE_HOST }}"
+  ORACLE_USER: "{{ $.Values.database.oracle.ORACLE_USER }}"
+  ORACLE_PASSWORD: "{{ $.Values.database.oracle.ORACLE_PASSWORD }}"
+  ORACLE_SCHEMA_PREFIX: "{{ $.Values.database.oracle.ORACLE_SCHEMA_PREFIX }}"
+  POSTGRES_HOST: "{{ $.Values.database.postgres.POSTGRES_HOST }}"
+  POSTGRES_USER: "{{ $.Values.database.postgres.POSTGRES_USER }}"
+  POSTGRES_PASSWORD: "{{ $.Values.database.postgres.POSTGRES_PASSWORD }}"
+  POSTGRES_SCHEMA_PREFIX: "{{ $.Values.database.postgres.POSTGRES_SCHEMA_PREFIX }}"
+  HASH_ALGORITHM: "{{ $.Values.security.HASH_ALGORITHM }}"
+  HASH_KEY: "{{ $.Values.security.HASH_KEY }}"
+  ACTIVE_DB_PROFILE: "{{ $.Values.database.ACTIVE_DB_PROFILE }}"
+  ALLOWED_ORIGINS: "{{ $.Values.cors.ALLOWED_ORIGINS }}"
+  CMS_USER_MANAGEMENT_SCHEMA: "{{ $.Values.schemaNames.CMS_USER_MANAGEMENT_SCHEMA }}"
+  KAFKA_STATUS:  "{{ $.Values.kafka.KAFKA_STATUS }}"
+  KAFKA_HOST: "{{ $.Values.kafka.KAFKA_HOST }}"
+  KAFKA_PORT: "{{ $.Values.kafka.KAFKA_PORT }}"
+  ORACLE_PORT: "{{ $.Values.database.oracle.ORACLE_PORT }}"
+  ORACLE_SERVICE_NAME: "{{ $.Values.database.oracle.ORACLE_SERVICE_NAME }}"
+  SCHEMA: "{{ $.Values.schemaNames.CMS_USER_MANAGEMENT_SCHEMA }}"
+  ALERT_APPLICABLE: "{{ $.Values.config.ALERT_APPLICABLE }}"
+  PASSWORD_RESET_LINK: "{{ $.Values.url.PASSWORD_RESET_LINK }}"
+
+mysqlhost: true
+redishost: false
+kafkahost: true
+publickeycert:
+  required: false
+serviceAccount:
+  required: false
+  roleARN: "{{ $.Values.role.arn }}"  

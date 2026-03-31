@@ -1,0 +1,248 @@
+environment:
+  namespace: sbi
+  env_name: uat
+  tempo_endpoint: http://k8s-observab-observab-ee0ff946f0-987421e67184d9e0.elb.ap-south-1.amazonaws.com:4317
+  nodeSelector: sbi
+
+images:
+  sbi_cms_issuance_card_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-card-extn:sbi-uat.v1398'
+  sbi_cms_issuance_card_management_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-card-management-extn:sbi-uat.v257'
+  sbi_cms_issuance_program_configuration_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-program-configuration-extn:sbi-uat.v163'
+  sbi_cms_issuance_scheduler_api_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-scheduler-api-extn:sbi-uat.v177'
+  sbi_cms_issuance_support_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-support-extn:sbi-uat.v104'
+  sbi_cms_issuance_batch_scheduler_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-batch-scheduler-extn:sbi-uat.v59'
+  sbi_cms_user_access_management_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-user-access-management-extn:sbi-uat.v66'
+  sbi_cms_user_management_extn: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-user-management-extn:sbi-uat.v47'
+  sbi_cms_issuance_ui_app: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-issuance-ui-app:sbi-uat.v374'
+  sbi_cms_global_service: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-global-service:sbi-uat.v32'
+  sbi_cms_platform_notification_service: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-notification-service:sbi-uat.v101'
+  sbi_cms_platform_go_connect: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-go-connect:sbi-uat.v81'
+  sbi_cms_platform_go_connect_server: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-go-connect-server:sbi-uat.v8'
+  sbi_cms_platform_audit_service: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-audit-service:sbi-uat.v6'
+  sbi_cms_platform_java_connect: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-java-connect:sbi-uat.v19'
+  sbi_cms_platform_go_exchange_rate_mapper: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-go-exchange-rate-mapper:sbi-uat.v19'
+  sbi_cms_mapping: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-mapping:sbi-uat.v103'
+  sbi_cms_platform_monolithic_mock_api: '736483234466.dkr.ecr.ap-south-1.amazonaws.com/sbi-cms-platform-monolithic-mock-api:sbi-uat.v56'
+  
+hpas:
+  minreplica: 1
+  maxreplica: 1
+ 
+database:
+  ACTIVE_DB_PROFILE: "oracle"
+  CARD_EXTN_ACTIVE_DB_PROFILE: "rac"
+  DB_PROFILE: "oracle"
+  MYSQL_HOST: "192.168.1.236"
+  mysql:
+    MYSQL_USER: "admin"
+    MYSQL_PASSWORD: "Canaraprod#123"
+    MYSQL_SCHEMA_PREFIX: ""
+  oracle:
+    ORACLE_HOST: "uatrac-scan.dcmsnonprod.bank.sbi"
+    ORACLE_USER: "blaze"
+    ORACLE_PASSWORD: "Kv3Cf951"
+    ORACLE_SCHEMA_PREFIX: ""
+    ORACLE_PORT: "6521"
+    ORACLE_SERVICE_NAME: "DCMSDB"
+  postgres:
+    POSTGRES_HOST: "globaldb-preprod-platform-cms-rds.global-g9jpjqjqn9ip.global.rds.amazonaws.com"
+    POSTGRES_USER: "postgres"
+    POSTGRES_PASSWORD: "preprodcms123#"
+    POSTGRES_SCHEMA_PREFIX: ""
+  migration:
+    DATA_MIGRATION_FLAG: "true"
+    DATA_MIGRATION_ORACLE_HOST: "10.189.40.7"
+    DATA_MIGRATION_ORACLE_PORT: "6521"
+    DATA_MIGRATION_ORACLE_SERVICE_NAME: "orcl"
+    DATA_MIGRATION_ORACLE_USER: "CMS_SBI_UAT"
+    DATA_MIGRATION_ORACLE_PASSWORD: "Sp##3456Pt9"
+    DATA_MIGRATION_CMS_CARD_SCHEMA_NAME: "CMS_CARD"
+    DATA_MIGRATION_CMS_PROGRAM_CFG_SCHEMA_NAME: "CMS_PROGRAM_CFG"
+
+redis:
+  REDIS_HOST: "sbi-cms-infinispan.openshift-operators.svc.cluster.local"
+  REDIS_PORT: "11222"
+
+kafka:
+  KAFKA_HOST: "dcms.apps.dcmsnonprod.bank.sbi"
+  KAFKA_PORT: "9092"
+  KAFKA_STATUS: "no-kafka"
+  
+
+role:
+  arn: "arn:aws:iam::903304317280:role/s3_cms_role"   
+
+host:
+  external_host: "https://dcms.apps.dcmsnonprod.bank.sbi"
+
+security:
+  TOKEN_SIGNING_KEY: "8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb"
+  TOKEN_EXPIRY: "24m"
+  SYSTEM_USER: "SYSTEM_USER"
+  HASH_ALGORITHM: "HmacSHA256"
+  HASH_KEY: "9XRe0/lWYrDzmWQhAdrLKQK3JY/O125wZahPsMRPr/c="
+  KEY_ENC_KEY: "S5V8csbx5DR3turpLQErNk3GXP1szQsfDpoqlUju6Y4="
+  SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM: "AES/GCM/NoPadding"
+  BUCKET_NAME: "sbi-cms-sit"
+  ENC_KEY: "S5V8csbx5DR3turpLQErNk3GXP1szQsfDpoqlUju6Y4="
+  ACS_AES_KEY: "iHXbeE1u6Pt2MBAaEI4CutoYeDd8p8vLu2Pv3zfT9xo="
+  INTEGRATION_KEY: "9XRe0/lWYrDzmWQhAdrLKQK3JY/O125wZahPsMRPr/c="
+
+url:
+  JASYPT_PASSWORD: "cmsblaze"
+  UAM_API_PROTOCOL: "http"
+  UAM_API_DNS: "sbi-cms-user-access-management-extn:7070"
+  UAM_API_ENDPOINT: "/sbi/uam/v2/user/authorize"
+  UAM_CHECK_REQUIRED: "false"
+  USE_TLS_BASE24_CLASSIC_D1: "Y"
+  USE_TLS_BASE24_CLASSIC_D2: "N"
+  USE_TLS_BASE24_CLASSIC_F1: "N"
+  USE_TLS_BASE24_EPS_F1: "N"
+  USE_TLS_EXCHANGE_RATE_MAPPER: "N"
+  CA_CERT_PATH: "/sbi/root.cer,/sbi/base.cer"
+  CLIENT_CERT_PATH: ""
+  CLIENT_KEY_PATH: ""
+  EXCHNGRM_CA_CERT_PATH: ""
+  EXCHNGRM_CLIENT_CERT_PATH: ""
+  EXCHNGRM_CLIENT_KEY_PATH: ""
+  OTEL_EXPORTER_OTLP_ENDPOINT: "k8s-observab-observab-ee0ff946f0-987421e67184d9e0.elb.ap-south-1.amazonaws.com:4317"
+  SERVICE_API_KEY: "WIpuwd7flpwKbgw1I2I0qMZz2H1kovb+fCOSA5nJlaM="
+  CONNECT_RETRY_ATTEMPTS: "3"
+  CONNECT_RETRY_INTERVAL: "3"
+  SECURITY_SYMMETRIC_ENCDEC_KEY: "1mK2eULaFN/CGVDEetVkxY1ZCto/42ziSSGTVNLQwnA="
+  GOCONNECT_PRODUCT_LIST_URL: "http://sbi-cms-global-service.sbi.svc.cluster.local:8050"
+  DATASOURCE_HOST: "uatrac-scan.dcmsnonprod.bank.sbi"
+  DATASOURCE_PORT: "6521"
+  DATASOURCE_DB: "DCMSDB"
+  DATASOURCE_SCHEMA_PREFIX: ""
+  DATASOURCE_SCHEMA: "GO_CONNECT"
+  DB_SSL_MODE: "disable"
+  DATASOURCE_DRIVER: "oracle.jdbc.driver.OracleDriver"
+  DATASOURCE_URL: "jdbc:oracle:thin:@uatrac-scan.dcmsnonprod.bank.sbi:6521/DCMSDB"
+  DATASOURCE_USERNAME: "GO_CONNECT"
+  DATASOURCE_PASSWORD: "zK402UAb"
+  DATASOURCE_DIALECT: "org.hibernate.dialect.OracleDialect"
+  DATASOURCE_DBTYPE: "oracle"
+  DATASOURCE_DBTYPE_MYSQL: "mysql"
+  NATS_URL: "nats-cluster.nats-cluster.svc.cluster.local:4222"
+  SECURITY_SYMMETRIC_ENCDEC_CIPHER_ALGORITHM: "AES/GCM/NoPadding"
+  PRODUCT_APP_URL: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance/card/communicationControllerJavaConnect/getcardactivationdata"
+  ACS_SERVER_URL: "https://acsuat.fssnet.co.in"
+  GO_CONNECT_SECURE_URL: "https://devpg.np.fssblaze.com/go-connect-v2-server-tango/api/v1/iso-handler?connectionName=TANGO1&tenantCode=KVB&productCode=CMS001&isEnc=Y"
+  GO_CONNECT_BASE_URL: "https://dcms.apps.dcmsnonprod.bank.sbi"
+  GO_CONNECT_JAVA_URL: "/sbi/javaconnect"
+  GO_CONNECT_SERVER_URL: "/sbi/go-connect-base24-classic-d1"
+  CA_CERT_PROVIDER_SERVER: ""
+  EXCHNGRM_CA_CERT_PROVIDER_SERVER: ""
+  PASSWORD_RESET_LINK: "https://devcms.np.fssblaze.com/sbi/resetpassword?token="
+  EMAIL_USERNAMES: "sbitestclient"
+  EMAIL_PASSWORDS: "sbitestclient_7f827c4b3aa6cd1f08d6b9cce2c0c80e"
+  EMAIL_SENDERS: "donotreply-debitcard@alerts.sbi.co.in"
+  EMAIL_HOST: "10.176.245.236"
+  EMAIL_PORT: "587"
+  SMS_IMPLEMENTATION: "SBI"
+  VALUEFIRST_API_URL: "https://http.myvfirst.com/smpp/sendsms"
+  VALUEFIRST_USERNAME: "fssuatoogle"
+  VALUEFIRST_AUTH_TOKEN: "ENC(PvXAXZJsRK894s5VJQNcr+4Y4mU9qfFMwZ7Al2QLKc5uY6eJjaH9o7nQNRHNYZy74AV9E7qAj/llp9wnqzlS1i+vsHVYliqpTQYIN6McUCg0+8lnPCk4LITLekpne19NgP1/d8Sd6BdR1VqcNh3P//obYVoYEzkH3RyCFoyDUGv8Xrpk1bWifM4j21LSl3fT4y9EGyX8HsbxjcC50G1EUprBdgsquHKHCYFFfYewHk+eKPXDkJjbbyxZdjsrPHgCxzHw9tR5gGvxTdPae9aNQg==)"
+  VALUEFIRST_SENDER_ID: "FSSBLZ"
+  EMAIL_SMTP_AUTH: "true"
+  EMAIL_SMTP_STARTTLS_ENABLE: "false"
+  SBI_SMS_API_URL: "https://smsapipprod.sbi.co.in:9443/bmg/sms/dcmsdomotp"
+  SBI_SMS_USERNAME : "dcmsdomotp"
+  SBI_SMS_PASSWORD: "dcmsdomotp"
+  SBI_SMS_SENDER_ID: "SBIBNK"
+  SBI_SMS_CHARGING: "0"
+  SBI_SMS_ACCOUNT: ""
+
+cors:
+  ALLOWED_ORIGINS: "https://dcms.apps.dcmsnonprod.bank.sbi,http://localhost:4200"
+
+services:
+  CMS_CARD_API: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance"
+  GO_EXC_MAPPER_API: "http://sbi-cms-platform-go-exchange-rate-mapper:8097/sbi/platform/exchange-rate-mapper"
+  GLOBAL_SERVICE_API: "http://sbi-cms-global-service:8050/sbi/global-service"
+  CMS_SCHEDULER_API: "http://sbi-cms-issuance-scheduler-api-extn:8056/sbi/scheduler-api"
+  CMS_SUPPORT_API: "http://sbi-cms-issuance-support-extn:8057/sbi/issuance-support"
+  CMS_PROGRAM_API: "http://sbi-cms-issuance-program-configuration-extn:8091/sbi/program-config"
+  CMS_BATCH_SCHEDULER_API: "http://sbi-cms-issuance-batch-scheduler-extn:8058/sbi/issuance-batch-scheduler"
+  CMS_ALERT_API: "http://sbi-cms-issuance-scheduler-api-extn:8056/sbi/scheduler-api"
+  CMS_USER_ACCESS_MANAGEMENT_API: "http://sbi-cms-user-access-management-extn:7070/sbi/uam/v2"
+  UAM_API: "http://sbi-cms-user-access-management-extn:7070/sbi/uam/v2"
+  CARD_MANAGEMENT: "http://sbi-cms-issuance-card-management-extn:8063/sbi/card-management"
+  CMS_PROGRAM_API1: "http://sbi-cms-issuance-program-configuration-extn:8091/sbi/program-config/program_configuration"
+  GLOBAL_SERVICE_API1: "http://sbi-cms-global-service:8050/sbi/global-service"
+  CMS_SUPPORT_API1: "http://sbi-cms-issuance-support-extn:8057/sbi/issuance-support/support"
+  CMS_CARD_MANAGEMENT_API: "http://sbi-cms-issuance-card-extn:8063/sbi/card-management/card_management"
+  CMS_HSM_CONNECT_API: "http://sbi-cms-issuance-hsm-connect-extn:8062/sbi/hsm-connector"
+  CMS_USERMANAGEMENT_API: "http://sbi-cms-user-management-extn:7071/sbi/usermanagement"
+  CMS_NOTIFICATION_API: "http://sbi-cms-platform-notification-service:8096/sbi/notification/api"
+  BLAZE_INTEGRATOR_API_URL: "http://kvb-cms-mapping:8080/kvb-mapping"
+  KVB_FETCH_COMMUNICATION_API: "https://www.kvbbank.net/bpmsUAT/rest/CueRest/invokeESBService/Account_Address_Fetch"
+  KVB_AD_LOGIN_API: "https://www.kvbbank.net/bpmsUAT/rest/CueRest/invokeESBService/KVB_Auth"
+  KVB_NCMC_API: "https://www.kvbbank.net/ESB/NCMCAccountOpening"
+  GOCONNECT_SECURE_URL : "http://sbi-cms-platform-dev-gc-base24-classic-d1:8290/sbi/go-connect-base24-classic-d1/api/v1/iso-handler?connectionName=BASE24-CLASSIC-D1&tenantCode=SBI&productCode=CMS001&isEnc=Y"
+  GOCONNECT_SECURE_EPS_URL : "https://dcms.apps.dcmsnonprod.bank.sbi/sbi/go-connect-base24-eps-f1/api/v1/iso-handler?connectionName=BASE24-EPS-F1&tenantCode=SBI&productCode=CMS001&isEnc=Y"
+
+schemaNames:
+  CMS_CARD_ISSUANCE_SCHEMA: "CMS_CARD"
+  CMS_CARD_MANAGEMENT_SCHEMA: "CMS_CARD_MGMT"
+  CMS_PROGRAM_CONFIG_SCHEMA: "CMS_PROGRAM_CFG"
+  CMS_SUPPORT_SCHEMA: "CMS_SUPPORT"
+  CMS_USER_MANAGEMENT_SCHEMA: "CMS_USER_ADMIN"
+  GLOBAL_DATA_SCHEMA: "CMS_GLOBAL"
+  AUDIT_SCHEMA: "CMS_AUDIT"
+  NOTIFICATION_SCHEMA: "CMS_NOTIFICATION"
+
+sftp:
+  SFTP_HOST: "sftp-service.sftp.svc.cluster.local"
+  SFTP_PORT: "2222"
+  SFTP_USER_ID: "sbi"
+  SFTP_PASS: "sbi123"
+  SFTP_REMOTE_DIR: "/config"
+
+config:
+  FILE_UPLOAD_SFTP_ENABLED: true
+  SFTP_HOST: "sftp-service.sftp.svc.cluster.local"
+  SFTP_PORT: "2222"
+  SFTP_USER: "sbi"
+  SFTP_PASSWORD: "sbi123"
+  SFTP_PRIVATE_KEY: null
+  SFTP_PRIVATE_KEY_PASSPHRASE: null
+  SFTP_REMOTE_DIRECTORY: "/config"
+  DEFAULT_TENANT_CODE: "SBI"
+  TENANT_ACCESS_CHECK_APPLICABLE: "0"
+  HIDE_PRODUCT_FEATURE: 0
+  ALERT_APPLICABLE: 1
+  ENABLE_HSM: "Y"
+  CACHE_PROVIDER: "memory"
+  CAF_APPLICABLE: 1
+  CAF_ENQUIRY_URL_SBI: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance/card/CafCommunicationController/CafEnquiryForSupportFunctions"
+  CAF_ENQUIRY_URL_SBF: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance/card/CafCommunicationController/CafEnquiryForSupportFunctions"
+  CAF_UPDATE_URL_SBI: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance/card/CafCommunicationController/CafEnquiryResponseUpdateToSwitch"
+  CAF_UPDATE_URL_SBF: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance/card/CafCommunicationController/CafEnquiryResponseUpdateToSwitch"
+  DCMS_BASEPATH_NEW: "http://sbi-cms-issuance-card-management-extn.sbi.svc.cluster.local:8063"
+  DCMS_BASEPATH_OLD: "http://sbi-cms-platform-monolithic-mock-api.sbi.svc.cluster.local:8080"
+  FETCH_CBS_COMMUNICATION_DETAILS: "http://sbi-cms-issuance-card-extn:8061/sbi/card-issuance/card/common/fetchCbsCommunicationDetailsInDCMS"
+  SECURITY_SYMMETRIC_ENCDEC_KEY: 1mK2eULaFN/CGVDEetVkxY1ZCto/42ziSSGTVNLQwnA=
+  DCMS_BASEPATH_OLD_EIS: http://10.189.40.5:7025
+  DCMS_BASEPATH_OLD_VIRTUAL: http://10.189.40.5:7027
+  SECURITY_ASYMMETRIC_PRIVATEKEY_FILE: /sbi/SBI_MONOLITHIC_privatekey.pem
+  SECURITY_ASYMMETRIC_PUBLICKEY_FILE:  /sbi/SBI_MONOLITHIC_publickey.pem
+  SBI_MAPPING_BASEPATH: https://eissiuat.sbi.co.in/gen5/gateway/OCOM_bth/enquiry
+  SBI_MAPPING_ESB_URL: https://esbuatlb.globalbank.sbi:9301/SBI_SOAPWS_ESB
+  SECURITY_SYMMETRIC_ENCDEC_KEY_ALGORITHM: AES
+  SECURITY_SYMMETRIC_ENCDEC_KEY_SIZE: "256"
+  SECURITY_AES_ALGO: AES/GCM/NoPadding
+  SECURITY_AES_KEY_SIZE: 256
+  SECURITY_RSA_ALGO: RSA/ECB/OAEPWITHSHA256ANDMGF1PADDING
+  KEY_PROVIDER_TYPE: pem
+  KEY_JKS_PATH: keys/keystore.jks
+  KEY_JKS_PASSWORD: password
+  KEY_JKS_ALIAS: sbi
+  DCMS_BASEPATH_NEW_CARD_MANAGEMENT: http://sbi-cms-issuance-card-management-extn.sbi.svc.cluster.local:8063
+  DCMS_BASEPATH_NEW_CARD: http://sbi-cms-issuance-card-extn.sbi.svc.cluster.local:8061
+  DCMS_BASEPATH_CBS: https://eissiuat.sbi.co.in
+  ESB_PASSWORD: Y7s9#2kL@91!sKqP@vC4xA0Z
+  SECURITY_KEY_IDENTITY: nMbKztZrGK3SQ25w1PDroksOUUk
+  SECURITY_ASYMMETRIC_CBS_PRIVATEKEY_FILE: /sbi/SBICbsPrivateKey.pem
+  SECURITY_ASYMMETRIC_CBS_PUBLICKEY_FILE: /sbi/SBICbsPublicKey.pem
